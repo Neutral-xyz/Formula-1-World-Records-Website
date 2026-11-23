@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Formula One World Records</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f6f7;--card:#fff;--text:#16161a;--muted:#6b6b76;--red:#e10600;--line:#e2e2e7}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f0f12;--card:#1a1a1f;--text:#f2f2f5;--muted:#9a9aa6;--line:#2c2c34}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f0f12;--card:#1a1a1f;--text:#f2f2f5;--muted:#9a9aa6;--line:#2c2c34}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+header{background:linear-gradient(135deg,#e10600,#7a0300);color:#fff;padding:36px 20px 28px;text-align:center}
+header h1{margin:0 0 6px;font-size:clamp(1.6rem,5vw,2.6rem);letter-spacing:.5px}
+header p{margin:0;opacity:.9}
+main{max-width:980px;margin:0 auto;padding:18px 14px 40px}
+.controls{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:1rem}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-size:.9rem}
+.tabs button.on{background:var(--red);border-color:var(--red);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:10px;padding:14px}
+.card small{color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-size:.7rem}
+.card h3{margin:4px 0 8px;font-size:.98rem}
+.val{font-size:1.5rem;font-weight:800;color:var(--red)}
+.who{font-weight:600}
+.note{color:var(--muted);font-size:.85rem;margin-top:2px}
+.empty{text-align:center;color:var(--muted);padding:30px}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:0 16px 30px}
+h2{margin:34px 0 10px;font-size:1.3rem;border-left:4px solid var(--red);padding-left:10px}
+nav a{color:#fff;margin:0 8px;font-weight:600;text-decoration:underline}
+select{padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:.95rem}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);margin-top:10px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+th{background:var(--red);color:#fff;position:sticky;top:0}
+td.y{font-weight:700;color:var(--red)}
+.sn{color:var(--muted);font-size:.8rem;margin-top:8px}
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:10px}
+.rc{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:.9rem}
+.rc b{background:var(--red);color:#fff;border-radius:6px;min-width:28px;text-align:center;padding:2px 4px;font-size:.8rem}
+</style>
+</head>
+<body>
+<header><h1>🏁 Formula One World Records</h1><p>The all-time marks of drivers, teams and circuits</p><nav><a href="#records">Records</a><a href="#seasons">Season results 1950–2025</a><a href="#calendar">Race calendars</a></nav></header>
+<main>
+<div class="controls" id="records">
+<input id="q" type="search" placeholder="Search records, drivers, teams…" aria-label="Search records">
+<div class="tabs" id="tabs"></div>
+</div>
+<div class="grid" id="grid"></div>
+<h2 id="seasons">Season results, 1950–2025</h2>
+<select id="dec" aria-label="Decade"></select>
+<div class="tw"><table><thead><tr><th>Year</th><th>Drivers’ champion</th><th>Team</th><th>Runner-up</th><th>Constructors’ champion</th></tr></thead><tbody id="sb"></tbody></table></div>
+<p class="sn">Champion, runner-up and Constructors’ champion for each season (the Constructors’ Championship began in 1958). Full points tables are not included. 1997: Michael Schumacher was excluded from the standings, so Frentzen is listed as runner-up. 2007: Hamilton and Alonso tied on points; Hamilton took second on countback.</p>
+<h2 id="calendar">Race calendars, 2000–2026</h2>
+<select id="cy" aria-label="Season"></select>
+<p class="sn" id="cn"></p>
+<div class="rg" id="cl"></div>
+</main>
+<footer>Records are current through the 2026 Las Vegas Grand Prix for Hamilton’s career totals, Ferrari’s wins, the youngest champion and pole sitter, and most overtakes. The other records were last checked against 2025, so check formula1.com for the latest figures.</footer>
+<script>
+var D=[
+["Career","Most World Championships","Michael Schumacher & Lewis Hamilton","7","Schumacher 1994–95, 2000–04; Hamilton 2008, 2014–15, 2017–20"],
+["Career","Most race wins","Lewis Hamilton","106","Latest: Barcelona GP 2026 (his first for Ferrari)"],
+["Career","Most pole positions","Lewis Hamilton","105","Latest: Mexico City GP 2026"],
+["Career","Most podiums","Lewis Hamilton","209","Latest: second in Mexico City GP 2026"],
+["Career","Most fastest laps","Michael Schumacher","77",""],
+["Career","Most wins from pole","Lewis Hamilton","61",""],
+["Career","Most Grands Prix started","Fernando Alonso","400+",""],
+["Career","Most wins at one Grand Prix","Lewis Hamilton","9","British GP"],
+["Career","Most consecutive points finishes","Lewis Hamilton","48","2018–2022"],
+["Career","Most consecutive poles","Ayrton Senna","8","1988–1989"],
+["Career","Most consecutive titles","Michael Schumacher","5","2000–2004"],
+["Season","Most wins in a season","Max Verstappen","19","2023 (22 races)"],
+["Season","Most consecutive wins","Max Verstappen","10","2023"],
+["Season","Most points in a season","Max Verstappen","575","2023"],
+["Season","Most podiums in a season","Max Verstappen","21","2023"],
+["Season","Most poles in a season","Sebastian Vettel","15","2011"],
+["Season","Most races in a season","Calendar record","24","2024 and 2025"],
+["Age","Youngest World Champion","Kimi Antonelli","20y 68d","Mexico City GP 2026 (previous record: Sebastian Vettel, 23y 134d, 2010)"],
+["Age","Youngest race winner","Max Verstappen","18y 228d","Spain 2016"],
+["Age","Youngest driver to start","Max Verstappen","17y 166d","Australia 2015"],
+["Age","Youngest points scorer","Max Verstappen","17y 180d","Malaysia 2015"],
+["Age","Youngest pole sitter","Kimi Antonelli","19y 202d","China 2026 (previous record: Sebastian Vettel, 21y 72d, Italy 2008)"],
+["Age","Oldest World Champion","Juan Manuel Fangio","46y 41d","1957"],
+["Age","Oldest race winner","Luigi Fagioli","53y 22d","France 1951"],
+["Constructors","Most Constructors’ Championships","Ferrari","16",""],
+["Constructors","Most race wins","Ferrari","250+","Charles Leclerc’s British GP 2026 win was the 250th; F1.com’s team page lists 251"],
+["Constructors","Most pole positions","Ferrari","250+",""],
+["Constructors","Most Grands Prix entered","Ferrari","1,100+","The only team present since 1950"],
+["Constructors","Most wins in a season","Red Bull Racing","21","2023 (22 races)"],
+["Constructors","Most points in a season","Red Bull Racing","860","2023"],
+["Constructors","Most consecutive wins","Red Bull Racing","15","2023"],
+["Constructors","Most consecutive Constructors’ titles","Ferrari","6","1999–2004"],
+["Race","Closest finish","Peter Gethin","0.010 s","Italy 1971, ahead of Ronnie Peterson"],
+["Race","Fastest pole average speed","Lando Norris","264.681 km/h","Italy 2025, Monza"],
+["Race","Fastest race average speed","Michael Schumacher","247.585 km/h","Italy 2003, Monza"],
+["Race","Fastest pit stop","McLaren (Lando Norris)","1.80 s","Qatar 2023"],
+["Race","Longest race","Jenson Button","4h 04m 39s","Canada 2011 (red flag delay)"],
+["Race","Most overtakes in a Grand Prix","Las Vegas GP 2026","352","Won by Max Verstappen. Previous record: 186, Dutch GP 2023. Overtake counts are unofficial and vary by source"],
+["Race","Lowest grid slot to win","John Watson","22nd","Long Beach 1983"],
+["Race","Narrowest title margin","Niki Lauda","0.5 pts","1984, over Alain Prost"]
+];
+var cats=["All"];D.forEach(function(r){if(cats.indexOf(r[0])<0)cats.push(r[0])});
+var cur="All",tabs=document.getElementById("tabs"),grid=document.getElementById("grid"),q=document.getElementById("q");
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function render(){
+ var t=q.value.toLowerCase(),rows=D.filter(function(r){return(cur==="All"||r[0]===cur)&&r.join(" ").toLowerCase().indexOf(t)>-1});
+ grid.innerHTML=rows.length?rows.map(function(r){return '<div class="card"><small>'+esc(r[0])+'</small><h3>'+esc(r[1])+'</h3><div class="val">'+esc(r[3])+'</div><div class="who">'+esc(r[2])+'</div>'+(r[4]?'<div class="note">'+esc(r[4])+'</div>':'')+'</div>'}).join(""):'<div class="empty">No records match your search.</div>';
+}
+function tabsRender(){tabs.innerHTML=cats.map(function(c){return '<button class="'+(c===cur?"on":"")+'" data-c="'+esc(c)+'">'+esc(c)+'</button>'}).join("")}
+tabs.addEventListener("click",function(e){var c=e.target.getAttribute("data-c");if(c){cur=c;tabsRender();render()}});
+q.addEventListener("input",render);
+tabsRender();render();
+var S=["1950|Nino Farina|Alfa Romeo|Juan Manuel Fangio|—","1951|Juan Manuel Fangio|Alfa Romeo|Alberto Ascari|—","1952|Alberto Ascari|Ferrari|Nino Farina|—","1953|Alberto Ascari|Ferrari|Juan Manuel Fangio|—","1954|Juan Manuel Fangio|Maserati / Mercedes|José Froilán González|—","1955|Juan Manuel Fangio|Mercedes|Stirling Moss|—","1956|Juan Manuel Fangio|Ferrari|Stirling Moss|—","1957|Juan Manuel Fangio|Maserati|Stirling Moss|—","1958|Mike Hawthorn|Ferrari|Stirling Moss|Vanwall","1959|Jack Brabham|Cooper|Tony Brooks|Cooper","1960|Jack Brabham|Cooper|Bruce McLaren|Cooper","1961|Phil Hill|Ferrari|Wolfgang von Trips|Ferrari","1962|Graham Hill|BRM|Jim Clark|BRM","1963|Jim Clark|Lotus|Graham Hill|Lotus","1964|John Surtees|Ferrari|Graham Hill|Ferrari","1965|Jim Clark|Lotus|Graham Hill|Lotus","1966|Jack Brabham|Brabham|John Surtees|Brabham","1967|Denny Hulme|Brabham|Jack Brabham|Brabham","1968|Graham Hill|Lotus|Jackie Stewart|Lotus","1969|Jackie Stewart|Matra|Jacky Ickx|Matra","1970|Jochen Rindt|Lotus|Jacky Ickx|Lotus","1971|Jackie Stewart|Tyrrell|Ronnie Peterson|Tyrrell","1972|Emerson Fittipaldi|Lotus|Jackie Stewart|Lotus","1973|Jackie Stewart|Tyrrell|Emerson Fittipaldi|Lotus","1974|Emerson Fittipaldi|McLaren|Clay Regazzoni|McLaren","1975|Niki Lauda|Ferrari|Emerson Fittipaldi|Ferrari","1976|James Hunt|McLaren|Niki Lauda|Ferrari","1977|Niki Lauda|Ferrari|Jody Scheckter|Ferrari","1978|Mario Andretti|Lotus|Ronnie Peterson|Lotus","1979|Jody Scheckter|Ferrari|Gilles Villeneuve|Ferrari","1980|Alan Jones|Williams|Nelson Piquet|Williams","1981|Nelson Piquet|Brabham|Carlos Reutemann|Williams","1982|Keke Rosberg|Williams|Didier Pironi|Ferrari","1983|Nelson Piquet|Brabham|Alain Prost|Ferrari","1984|Niki Lauda|McLaren|Alain Prost|McLaren","1985|Alain Prost|McLaren|Michele Alboreto|McLaren","1986|Alain Prost|McLaren|Nigel Mansell|Williams","1987|Nelson Piquet|Williams|Nigel Mansell|Williams","1988|Ayrton Senna|McLaren|Alain Prost|McLaren","1989|Alain Prost|McLaren|Ayrton Senna|McLaren","1990|Ayrton Senna|McLaren|Alain Prost|McLaren","1991|Ayrton Senna|McLaren|Nigel Mansell|McLaren","1992|Nigel Mansell|Williams|Riccardo Patrese|Williams","1993|Alain Prost|Williams|Ayrton Senna|Williams","1994|Michael Schumacher|Benetton|Damon Hill|Williams","1995|Michael Schumacher|Benetton|Damon Hill|Benetton","1996|Damon Hill|Williams|Jacques Villeneuve|Williams","1997|Jacques Villeneuve|Williams|Heinz-Harald Frentzen|Williams","1998|Mika Häkkinen|McLaren|Michael Schumacher|McLaren","1999|Mika Häkkinen|McLaren|Eddie Irvine|Ferrari","2000|Michael Schumacher|Ferrari|Mika Häkkinen|Ferrari","2001|Michael Schumacher|Ferrari|David Coulthard|Ferrari","2002|Michael Schumacher|Ferrari|Rubens Barrichello|Ferrari","2003|Michael Schumacher|Ferrari|Kimi Räikkönen|Ferrari","2004|Michael Schumacher|Ferrari|Rubens Barrichello|Ferrari","2005|Fernando Alonso|Renault|Kimi Räikkönen|Renault","2006|Fernando Alonso|Renault|Michael Schumacher|Renault","2007|Kimi Räikkönen|Ferrari|Lewis Hamilton|Ferrari","2008|Lewis Hamilton|McLaren|Felipe Massa|Ferrari","2009|Jenson Button|Brawn|Sebastian Vettel|Brawn","2010|Sebastian Vettel|Red Bull|Fernando Alonso|Red Bull","2011|Sebastian Vettel|Red Bull|Jenson Button|Red Bull","2012|Sebastian Vettel|Red Bull|Fernando Alonso|Red Bull","2013|Sebastian Vettel|Red Bull|Fernando Alonso|Red Bull","2014|Lewis Hamilton|Mercedes|Nico Rosberg|Mercedes","2015|Lewis Hamilton|Mercedes|Nico Rosberg|Mercedes","2016|Nico Rosberg|Mercedes|Lewis Hamilton|Mercedes","2017|Lewis Hamilton|Mercedes|Sebastian Vettel|Mercedes","2018|Lewis Hamilton|Mercedes|Sebastian Vettel|Mercedes","2019|Lewis Hamilton|Mercedes|Valtteri Bottas|Mercedes","2020|Lewis Hamilton|Mercedes|Valtteri Bottas|Mercedes","2021|Max Verstappen|Red Bull|Lewis Hamilton|Mercedes","2022|Max Verstappen|Red Bull|Charles Leclerc|Red Bull","2023|Max Verstappen|Red Bull|Sergio Pérez|Red Bull","2024|Max Verstappen|Red Bull|Lando Norris|McLaren","2025|Lando Norris|McLaren|Max Verstappen|McLaren"].map(function(s){return s.split("|")});
+var dec=document.getElementById("dec"),sb=document.getElementById("sb");
+dec.innerHTML='<option value="all">All seasons</option>'+[1950,1960,1970,1980,1990,2000,2010,2020].map(function(d){return '<option value="'+d+'">'+d+'s'+'</option>'}).join("");
+function renderS(){var v=dec.value;sb.innerHTML=S.filter(function(r){return v==="all"||(+r[0]>=+v&&+r[0]<+v+10)}).map(function(r){return '<tr><td class="y">'+r[0]+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td></tr>'}).join("")}
+dec.addEventListener("change",renderS);renderS();
+var N={AUS:"Australian",MAL:"Malaysian",BRA:"Brazilian",SMR:"San Marino",ESP:"Spanish",EUR:"European",MON:"Monaco",CAN:"Canadian",FRA:"French",AUT:"Austrian",GBR:"British",GER:"German",HUN:"Hungarian",BEL:"Belgian",ITA:"Italian",USA:"United States",JPN:"Japanese",BHR:"Bahrain",CHN:"Chinese",TUR:"Turkish",SGP:"Singapore",ABU:"Abu Dhabi",KOR:"Korean",IND:"Indian",RUS:"Russian",AZE:"Azerbaijan",MEX:"Mexico City",NED:"Dutch",SAU:"Saudi Arabian",MIA:"Miami",EMI:"Emilia Romagna",QAT:"Qatar",LAS:"Las Vegas",POR:"Portuguese",EIF:"Eifel",TUS:"Tuscan",SAK:"Sakhir",A70:"70th Anniversary",STY:"Styrian",BCN:"Barcelona",MAD:"Madrid"};
+var K={2000:"AUS BRA SMR GBR ESP EUR MON CAN FRA AUT GER HUN BEL ITA USA JPN MAL",2001:"AUS MAL BRA SMR ESP AUT MON CAN EUR FRA GBR GER HUN BEL ITA USA JPN",2002:"AUS MAL BRA SMR ESP AUT MON CAN EUR GBR FRA GER HUN BEL ITA USA JPN",2003:"AUS MAL BRA SMR ESP AUT MON CAN EUR FRA GBR GER HUN ITA USA JPN",2004:"AUS MAL BHR SMR ESP MON EUR CAN USA FRA GBR GER HUN BEL ITA CHN JPN BRA",2005:"AUS MAL BHR SMR ESP MON EUR CAN USA FRA GBR GER HUN TUR ITA BEL BRA JPN CHN",2006:"BHR MAL AUS SMR EUR ESP MON GBR CAN USA FRA GER HUN TUR ITA CHN JPN BRA",2007:"AUS MAL BHR ESP MON CAN USA FRA GBR EUR HUN TUR ITA BEL JPN CHN BRA",2008:"AUS MAL BHR ESP TUR MON CAN FRA GBR GER HUN EUR BEL ITA SGP JPN CHN BRA",2009:"AUS MAL CHN BHR ESP MON TUR GBR GER HUN EUR BEL ITA SGP JPN BRA ABU",2010:"BHR AUS MAL CHN ESP MON TUR CAN EUR GBR GER HUN BEL ITA SGP JPN KOR BRA ABU",2011:"AUS MAL CHN TUR ESP MON CAN EUR GBR GER HUN BEL ITA SGP JPN KOR IND ABU BRA",2012:"AUS MAL CHN BHR ESP MON CAN EUR GBR GER HUN BEL ITA SGP JPN KOR IND ABU USA BRA",2013:"AUS MAL CHN BHR ESP MON CAN GBR GER HUN BEL ITA SGP KOR JPN IND ABU USA BRA",2014:"AUS MAL BHR CHN ESP MON CAN AUT GBR GER HUN BEL ITA SGP JPN RUS USA BRA ABU",2015:"AUS MAL CHN BHR ESP MON CAN AUT GBR HUN BEL ITA SGP JPN RUS USA MEX BRA ABU",2016:"AUS BHR CHN RUS ESP MON CAN EUR AUT GBR HUN GER BEL ITA SGP MAL JPN USA MEX BRA ABU",2017:"AUS CHN BHR RUS ESP MON CAN AZE AUT GBR HUN BEL ITA SGP MAL JPN USA MEX BRA ABU",2018:"AUS BHR CHN AZE ESP MON CAN FRA AUT GBR GER HUN BEL ITA SGP RUS JPN USA MEX BRA ABU",2019:"AUS BHR CHN AZE ESP MON CAN FRA AUT GBR GER HUN BEL ITA SGP RUS JPN MEX USA BRA ABU",2020:"AUT STY HUN GBR A70 ESP BEL ITA TUS RUS EIF POR EMI TUR BHR SAK ABU",2021:"BHR EMI POR ESP MON AZE FRA STY AUT GBR HUN BEL NED ITA RUS TUR USA MEX BRA QAT SAU ABU",2022:"BHR SAU AUS EMI MIA ESP MON AZE CAN GBR AUT FRA HUN BEL NED ITA SGP JPN USA MEX BRA ABU",2023:"BHR SAU AUS AZE MIA MON ESP CAN AUT GBR HUN BEL NED ITA SGP JPN QAT USA MEX BRA LAS ABU",2024:"BHR SAU AUS JPN CHN MIA EMI MON CAN ESP AUT GBR HUN BEL NED ITA AZE SGP USA MEX BRA LAS QAT ABU",2025:"AUS CHN JPN BHR SAU MIA EMI MON ESP CAN AUT GBR BEL HUN NED ITA AZE SGP USA MEX BRA LAS QAT ABU",2026:"AUS CHN JPN MIA CAN MON BCN AUT GBR BEL HUN NED ITA MAD AZE SGP USA MEX BRA LAS QAT ABU"};
+var X={2011:"The Bahrain GP was cancelled.",2020:"Shortened, rescheduled season because of COVID-19.",2026:"The Bahrain and Saudi Arabian GPs were cancelled (planned 24 races, now 22). Qatar (29 Nov) and Abu Dhabi (6 Dec) are still to come."};
+var cy=document.getElementById("cy"),cl=document.getElementById("cl"),cn=document.getElementById("cn");
+cy.innerHTML=Object.keys(K).reverse().map(function(y){return '<option value="'+y+'">'+y+' ('+K[y].split(" ").length+' races)</option>'}).join("");
+function renderC(){var y=cy.value,r=K[y].split(" ");cn.textContent=(X[y]||"")+" Race order as run, by round.";cl.innerHTML=r.map(function(c,i){return '<div class="rc"><b>'+(i+1)+'</b><span>'+esc(N[c])+' GP</span></div>'}).join("")}
+cy.addEventListener("change",renderC);renderC();
+</script>
+</body>
+</html>
